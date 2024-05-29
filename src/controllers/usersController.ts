@@ -1,20 +1,18 @@
 import { Request, Response} from "express";
-import {User} from "../types/userResponse";
+import User from "../models/userModel";
+import { UserInput, UserOutput } from "../types";
 
-const getUsers = (req: Request, res: Response) => {
-    res.send([]);
-}
-
-const getUsersById = (req: Request, res: Response<User>) => {
-    res.send({
-        id: 1,
-        name: "John Doe",
-        email: "allan@email.com",
-        role: "admin"
-    });
+const createUsers = async (request: Request< {}, {}, UserInput>, response:Response) => {
+    const data = request.body;
+    try {
+        const user = await User.create(data) as UserOutput;
+        return response.status(201).json(user);
+    } catch (error) {
+        console.log(error);
+        return response.status(400).send({message: "An error occured", error: error})
+    }
 }
 
 export default {
-    getUsers,
-    getUsersById
+    createUsers
 }
