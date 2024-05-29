@@ -1,8 +1,16 @@
 import {sequelize} from "../config/db";
+import {Model, DataTypes, InferAttributes, InferCreationAttributes} from "sequelize";
 
-import {Model, DataTypes} from "sequelize";
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+    public id!: number;
+    public name!: string;
+    public email!: string;
+    public phone!: string;
+    public password!: string;
+}
 
-const User = sequelize.define("User", {
+User.init(
+{
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -15,7 +23,6 @@ const User = sequelize.define("User", {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
     },
     phone: {
         type: DataTypes.STRING,
@@ -24,5 +31,13 @@ const User = sequelize.define("User", {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+},
+    {
+        sequelize,
+        tableName: "users"
     }
-})
+);
+
+export default User;
+
