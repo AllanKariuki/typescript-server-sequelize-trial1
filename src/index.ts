@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import usersRouter from './routes/usersRouter';
 import {sequelize} from "./config/db";
-import "./models/userModel";
+import db from "./models";
 
 const app = express();
 const PORT = 8000;
@@ -14,10 +14,21 @@ app.get("/", (request: Request, response: Response) => {
 
 app.use("/", usersRouter);
 
-sequelize.sync().then(() => {
-     app.listen(PORT, () => {
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+
+    await sequelize.sync();
+    console.log('All models were synchronized successfully.');
+
+    app.listen((PORT), () => {
         console.log(`Server running at http://localhost:${PORT}`)
     })
-}).catch((error: Error) => {
-    console.log('Unable to connect the database', error);
-});
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
+
+startServer();
+
